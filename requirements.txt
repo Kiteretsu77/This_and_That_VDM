@@ -1,0 +1,25 @@
+# Non-strict version lib
+opencv-python
+transformers
+accelerate
+requests
+moviepy
+omegaconf
+# xformers
+tensorboard
+einops
+yacs 
+loguru 
+imageio
+pyparsing
+ultralytics
+lpips
+matplotlib
+git+https://github.com/facebookresearch/segment-anything.git
+
+# Strict version lib
+bitsandbytes==0.43.0
+diffusers==0.25.1
+timm==0.4.12
+scipy==1.9.3
+pyiqa==0.1.7

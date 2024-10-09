@@ -1,0 +1,78 @@
+
+# Model Setting 
+pretrained_model_name_or_path: stabilityai/stable-video-diffusion-img2vid   # -xt is for 25 frames version
+load_unet_path:         # This is usally used to load pretrained UNet; e.g., you may want to start one of your checkpoints trained before
+video_seq_length: 14    # Standardized to 14
+process_fps: 7
+train_noise_aug_strength: 0.1
+scheduler: EDM          
+conditioning_dropout_prob: 0.1    
+
+
+# Dataset Setting
+dataset_name: Bridge            # WebVid / Bridge 
+dataset_path: [../sanity_check/bridge_v1_raw, ../sanity_check/bridge_v2_raw]
+output_dir: checkpoints/img2video
+height: 256                   # Ratio that is functional: 256:384  576:1024  320:512  320:576
+width: 384                    # It is said that the height and width should be a scale of 64      
+dataloader_num_workers: 4     # Don't set this too large; usually, Video diffusion are slow processing, so don't need that many workers to do early loading
+flip_aug_prob: 0.45           # Whether we flip the GT and cond vertically
+acceleration_tolerance: 4     # Recommened setting
+
+
+# Text setting
+use_text: True                             # If this is True, we will use text value
+pretrained_tokenizer_name_or_path: stabilityai/stable-diffusion-2-1-base      # Use SD 2.1
+empty_prompts_proportion: 0.0              # Useless now, we already have CFG in training
+mix_ambiguous: False                       # Whether we mix ambiguous prompt for "this" and "that"  
+
+
+# Motion setting  Useless right now... 
+motion_bucket_id: 200           # Set it for exact value; If this is none, we will use below setting
+dataset_motion_mean: 35.3       # For 14 fps, it is N(35.3, 18.5)
+dataset_motion_std: 18.5        # For 25 fps, it is N(?, ?)
+svd_motion_mean: 165
+svd_motion_std: 22.5
+
+
+# Training setting
+resume_from_checkpoint: False     # latest/False
+num_train_iters: 100000           # Will automatically choose the checkpoints at 99K
+partial_finetune: False           # Whether we just tune some params to speed up
+train_batch_size: 1               # This is the batch size per GPU         
+checkpointing_steps: 3000
+validation_step: 300
+logging_name: logging
+seed: 42
+validation_img_folder:    # Prepare your own validation dataset
+validation_store_folder: validation_results
+checkpoints_total_limit: 15
+
+# Noise Strength
+noise_mean: 0.5       # Regular Img2Video: (0.7, 1.6); Text2Video: (0.5, 1.4)
+noise_std: 1.4    
+
+
+# Inference
+num_inference_steps: 25
+inference_noise_aug_strength: 0.1
+inference_max_guidance_scale: 3.0   # Take training and testing at different scenario
+
+
+# Learning Rate and Optimizer
+learning_rate: 1e-5           # Usually this is ok 
+scale_lr: False               # TODO: Is it needed to scale the learning rate?         
+adam_beta1: 0.9
+adam_beta2: 0.999
+use_8bit_adam: True           # Need this to save more memory
+adam_weight_decay: 1e-2
+adam_epsilon: 1e-08
+lr_warmup_steps: 500
+lr_decay_scale: 0.5
+
+
+# Other Setting
+mixed_precision: fp16
+gradient_accumulation_steps: 1    
+gradient_checkpointing: 1         
+report_to: tensorboard
