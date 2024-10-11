@@ -1,8 +1,9 @@
 '''
-    This file is to test SVD and ControlNet version.
+    This file is to test UNet and GestureNet.
 '''
 
 import os, shutil, sys
+import urllib.request
 import argparse
 import imageio
 import math
@@ -36,9 +37,7 @@ from svd.temporal_controlnet import ControlNetModel
 # torch.manual_seed(42)
 # np.random.seed(42)
 
-def execute_inference(unet_path, gesturenet_path, model_type, validation_path, parent_store_folder, use_ambiguous_prompt):
-
-    base_mode_name = "stabilityai/stable-video-diffusion-img2vid"
+def execute_inference(huggingface_pretrained_path, model_type, validation_path, parent_store_folder, use_ambiguous_prompt):
 
     # Check path
     if os.path.exists(parent_store_folder):
@@ -46,24 +45,27 @@ def execute_inference(unet_path, gesturenet_path, model_type, validation_path, p
     os.makedirs(parent_store_folder)
 
 
-    # Check the folder name that store the **yaml**
-    # Read UNet config (Needs to read no matter which model type)
-    yaml_path = os.path.join(unet_path, "train_image2video.yaml")
-    assert(os.path.exists(yaml_path))
-
+    # Hard-Code the remote url
+    yaml_url = "https://huggingface.co/HikariDawn/This-and-That-1.0/resolve/main/unet/train_image2video.yaml"
     if model_type == "GestureNet":    # If it is GestureNet, this UNet is based on the file path recorded inside
-        # Read GestureNet Config
-        yaml_path = os.path.join(gesturenet_path, "train_image2video_gesturenet.yaml")
-        assert(os.path.exists(yaml_path))
+        yaml_url = "https://huggingface.co/HikariDawn/This-and-That-1.0/resolve/main/gesturenet/train_image2video_gesturenet.yaml"
         
-    # Read config yaml for UNet/GestureNet
-    base_config = OmegaConf.load(yaml_path)
+
+    # Prepare the temporary Store Path
+    yaml_download_path = "pretrained/current_yaml.yaml"
+    if os.path.exists(yaml_download_path):
+        os.remove(yaml_download_path)
+    
+    # Download the yaml path
+    urllib.request.urlretrieve(yaml_url, yaml_download_path)
+    assert(os.path.exists(yaml_download_path))
+
+    # Load the config
+    base_config = OmegaConf.load(yaml_download_path)
 
 
-
-
-    # Other setting
-    base_config["validation_img_folder"] = validation_path      # 我们这里就用validation single的path
+    # Other Settings
+    base_config["validation_img_folder"] = validation_path      
 
 
 
@@ -84,7 +86,7 @@ def execute_inference(unet_path, gesturenet_path, model_type, validation_path, p
         base_config["pretrained_model_name_or_path"], subfolder="vae", revision=None, variant="fp16"
     )
     unet = UNetSpatioTemporalConditionModel.from_pretrained(
-        unet_path, 
+        huggingface_pretrained_path, 
         subfolder = "unet", 
         low_cpu_mem_usage = True,
         # variant = "fp16",
@@ -126,8 +128,8 @@ def execute_inference(unet_path, gesturenet_path, model_type, validation_path, p
 
         # Handle the Controlnet first from UNet
         gesturenet = ControlNetModel.from_pretrained(
-                                                        gesturenet_path, 
-                                                        subfolder = "controlnet", 
+                                                        huggingface_pretrained_path, 
+                                                        subfolder = "gesturenet", 
                                                         low_cpu_mem_usage = True,
                                                         variant = None,
                                                     )
@@ -175,16 +177,10 @@ if __name__ == "__main__":
         help="\"UNet\" for VL (vision language) / \"GestureNet\" for VGL (vision gesture language)",
     )
     parser.add_argument(
-        "--unet_path",
+        "--huggingface_pretrained_path",
         type=str,
-        default="weights/unet/",
+        default="HikariDawn/This-and-That-1.0",
         help="Path to the unet folder path.",
-    )
-    parser.add_argument(
-        "--gesturenet_path",
-        type=str,
-        default="weights/gesturenet/",
-        help="Path to the gesturenet folder path.",
     )
     parser.add_argument(
         "--validation_path",
@@ -209,8 +205,7 @@ if __name__ == "__main__":
 
     # File Setting
     model_type = args.model_type
-    unet_path = args.unet_path
-    gesturenet_path = args.gesturenet_path
+    huggingface_pretrained_path = args.huggingface_pretrained_path
     # validation_path Needs to have subforder for each instance.
     # Each instance requries "im_0.jpg" for the first image; data.txt for the gesture position; lang.txt for the language
     validation_path = args.validation_path      
@@ -219,7 +214,7 @@ if __name__ == "__main__":
 
 
     # Execution
-    execute_inference(unet_path, gesturenet_path, model_type, validation_path, parent_store_folder, use_ambiguous_prompt)
+    execute_inference(huggingface_pretrained_path, model_type, validation_path, parent_store_folder, use_ambiguous_prompt)
 
     
     print("All finished!!!")

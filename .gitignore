@@ -13,7 +13,7 @@ diffusers/
 weights/
 checkpoints/
 validation_videos*
-
+pretrained/*
 
 *.pyc
 *.sh
@@ -43,3 +43,5 @@ events.*
 !saved_models/*.md
 !LICENSE.txt
 !config/*
+!__assets__/*
+!pretrained/PUT_YOUR_WEIGHT_HERE.md

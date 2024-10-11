@@ -1,7 +1,6 @@
-
-
-
-
+<p align="center">
+  <img src="__assets__/ThisThat_logo.png" height=100>
+</p>
 <div align="center">
 
 ## This&That: Language-Gesture Controlled Video Generation for Robot Planning
@@ -22,8 +21,13 @@ Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that).
 
 ## <a name="Update"></a>Update 🔥🔥🔥
 - [x] Release the test code implementation of This&That 
-- [ ] Release the train code implementation
+- [x] Release the huggingface pretrained Bridge-trained paper weight (v1.0) of This&That 
+- [ ] Release the huggingface pretrained Bridge-trained improved weight (v1.1) of This&That 
+- [ ] Release the Gradio Demo && Huggingface Demo
+- [ ] Release the huggingface pretrained IssacGym-trained paper weight of This&That 
 - [ ] Release the dataset curation
+- [ ] Release the train code implementation
+
 
 
 :star: **If you like This&That, please help star this repo. Thanks!** :hugs:
@@ -48,15 +52,22 @@ https://github.com/user-attachments/assets/fc6b00c1-db7d-4278-8965-a6cf802a2b08
 
 
 ## <a name="regular_inference"></a> Regular Inference ⚡⚡
+We provide an easy inference methods by automatically download the pretrained and the yaml file needed.
+The testing dataset can be found in **__assets__** folder which includes all the format needed. The generated results can be found at **generated_results**.
+Feel free to explore the coding structure, we won't go too details right now.
 
-1. Download the model weight from [**here**]() and **put the weight to "pretrained" folder**.
+Note that, the weight right now we provide is Bridge-trained, so the IssacGym trained one is a different one and will be provided later.
 
-2. Then, Execute (**single image/video** or a **directory mixed with images&videos** are all ok!)
 ```shell
-    python test_code/inference.py --model_type GestureNet --unet_path weights/unet/ --gesturenet_path weights/gesturenet/
+    python test_code/inference.py --model_type GestureNet
 ```
 
-The default arguments of test_code/inference.py is capable of executing sample images from "__assets__" folder and a lot of settings are fixed. Please have a look for the argument parts available.
+The default arguments of test_code/inference.py is capable of executing sample images from "__assets__" folder and a lot of settings are fixed. 
+Please have a look for the argument parts available. 
+
+Change **--model_type** to **UNet** for VL (Vision+Language), or to **GestureNet** for VGL (Vision+Language+Gesture). Recommend to use VGL for the best performance.
+
+
 
 
 # Warning: The rest are still organizing and is not ready!
