@@ -1,7 +1,20 @@
-# This_and_That_VDM
+
+
+
+
+<div align="center">
+
+## This&That: Language-Gesture Controlled Video Generation for Robot Planning
+    
+[![arXiv](https://img.shields.io/badge/arXiv-red)]([https://arxiv.org/pdf/2312.03641.pdf](https://arxiv.org/abs/2407.05530?context=cs)) &ensp; [![Project Page](https://img.shields.io/badge/Project%20Page-green
+)](https://cfeng16.github.io/this-and-that/) 
+    
+</div>
+
 This is the official implementation of VDM part of This&amp;That: Language-Gesture Controlled Video Generation for Robot Planning. 
 
-Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that)
+Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that).
+    
 
 
 🔥 [Update](#Update) **|** 👀 [**Visualization**](#Visualization)  **|** 🔧 [Installation](#installation) **|** 🧩 [Dataset Curation](#dataset_curation) **|** 💻 [Train](#train) 
@@ -19,7 +32,7 @@ Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that)
 ## <a name="Visualization"></a> Visualization 👀
 ---
 
-<!-- https://github.com/ -->
+https://github.com/user-attachments/assets/fc6b00c1-db7d-4278-8965-a6cf802a2b08
 
 ---
 
@@ -68,3 +81,19 @@ The second stage is finetuning our GestureNet (for **image**, **language**, **ge
 ```
     python train_code/train_csvd.py
 ```
+
+
+## :books: Citation
+If you make use of our work, please cite our paper.
+```bibtex
+@article{wang2024language,
+  title={This\&That: Language-Gesture Controlled Video Generation for Robot Planning},
+  author={Wang, Boyang and Sridhar, Nikhil and Feng, Chao and Van der Merwe, Mark and Fishman, Adam and Fazeli, Nima and Park, Jeong Joon},
+  journal={arXiv preprint arXiv:2407.05530},
+  year={2024}
+}
+```
+
+## 🤗 Acknowledgment
+The current version of **This&That** is built on [SVD](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid). We appreciate the authors for sharing their awesome codebase.
+
