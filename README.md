@@ -22,7 +22,7 @@ Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that).
 ## <a name="Update"></a>Update 🔥🔥🔥
 - [x] Release the test code implementation of This&That 
 - [x] Release the huggingface pretrained Bridge-trained paper weight (v1.0) of This&That 
-- [ ] Release the huggingface pretrained Bridge-trained improved weight (v1.1) of This&That 
+- [x] Release the huggingface pretrained Bridge-trained improved weight (v1.1) of This&That 
 - [ ] Release the Gradio Demo && Huggingface Demo
 - [ ] Release the huggingface pretrained IssacGym-trained paper weight of This&That 
 - [ ] Release the dataset curation
@@ -59,13 +59,15 @@ Feel free to explore the coding structure, we won't go too details right now.
 Note that, the weight right now we provide is Bridge-trained, so the IssacGym trained one is a different one and will be provided later.
 
 ```shell
-    python test_code/inference.py --model_type GestureNet
+    python test_code/inference.py --model_type GestureNet --huggingface_pretrained_path HikariDawn/This-and-That-1.1
 ```
 
 The default arguments of test_code/inference.py is capable of executing sample images from "__assets__" folder and a lot of settings are fixed. 
 Please have a look for the argument parts available. 
 
-Change **--model_type** to **UNet** for VL (Vision+Language), or to **GestureNet** for VGL (Vision+Language+Gesture). Recommend to use VGL for the best performance.
+Change **--model_type** to **UNet** for VL (Vision+Language), or to **GestureNet** for VGL (Vision+Gesture+Language). Recommend to use VGL for the best performance.
+
+We provide two kinds of model weight, one is paper weight named [**V1.0**](https://huggingface.co/HikariDawn/This-and-That-1.0). Another is [**V1.1**](https://huggingface.co/HikariDawn/This-and-That-1.1) which we finetune the hyperparameter a little bit to have slightly better performance.
 
 
 

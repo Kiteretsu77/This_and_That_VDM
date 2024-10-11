@@ -22,6 +22,7 @@ from diffusers import (
     AutoencoderKLTemporalDecoder,
     DDPMScheduler,
 )
+from huggingface_hub import hf_hub_download
 from transformers import AutoTokenizer, PretrainedConfig    
 
 # Import files from the local folder
@@ -45,22 +46,18 @@ def execute_inference(huggingface_pretrained_path, model_type, validation_path, 
     os.makedirs(parent_store_folder)
 
 
-    # Hard-Code the remote url
-    yaml_url = "https://huggingface.co/HikariDawn/This-and-That-1.0/resolve/main/unet/train_image2video.yaml"
-    if model_type == "GestureNet":    # If it is GestureNet, this UNet is based on the file path recorded inside
-        yaml_url = "https://huggingface.co/HikariDawn/This-and-That-1.0/resolve/main/gesturenet/train_image2video_gesturenet.yaml"
-        
-
-    # Prepare the temporary Store Path
-    yaml_download_path = "pretrained/current_yaml.yaml"
-    if os.path.exists(yaml_download_path):
-        os.remove(yaml_download_path)
-    
-    # Download the yaml path
-    urllib.request.urlretrieve(yaml_url, yaml_download_path)
-    assert(os.path.exists(yaml_download_path))
+    # Read the yaml setting files (Very important for loading hyperparamters needed)
+    if not os.path.exists(huggingface_pretrained_path):
+        yaml_download_path = hf_hub_download(repo_id=huggingface_pretrained_path, subfolder="unet", filename="train_image2video.yaml")
+        if model_type == "GestureNet":
+            yaml_download_path = hf_hub_download(repo_id=huggingface_pretrained_path, subfolder="gesturenet", filename="train_image2video_gesturenet.yaml")
+    else:   # If the path is a local path we can concatenate it here
+        yaml_download_path = os.path.join(huggingface_pretrained_path, "unet", "train_image2video.yaml")
+        if model_type == "GestureNet":
+            yaml_download_path = os.path.join(huggingface_pretrained_path, "gesturenet", "train_image2video_gesturenet.yaml")
 
     # Load the config
+    assert(os.path.exists(yaml_download_path))
     base_config = OmegaConf.load(yaml_download_path)
 
 
@@ -179,7 +176,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--huggingface_pretrained_path",
         type=str,
-        default="HikariDawn/This-and-That-1.0",
+        default="HikariDawn/This-and-That-1.1",
         help="Path to the unet folder path.",
     )
     parser.add_argument(
