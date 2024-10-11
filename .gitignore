@@ -44,4 +44,5 @@ events.*
 !LICENSE.txt
 !config/*
 !__assets__/*
+!__assets__/Bridge_example/*
 !pretrained/PUT_YOUR_WEIGHT_HERE.md
