@@ -109,9 +109,8 @@ def get_thisthat_sam(config, intput_dir, store_dir = None, flip = False, verbose
 
 
         # Check the min max value range
-        if verbose:
-            print("{} min, max range value is {} - {}".format(intput_dir, np.min(base_img), np.max(base_img)))
-
+        # if verbose:
+        #     print("{} min, max range value is {} - {}".format(intput_dir, np.min(base_img), np.max(base_img)))
 
 
         # Write base img based on frame_idx

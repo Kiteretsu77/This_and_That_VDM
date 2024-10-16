@@ -221,7 +221,6 @@ class StableVideoDiffusionControlNetPipeline(DiffusionPipeline):
         fps,
         motion_bucket_id,
         noise_aug_strength,
-        coordinate_values,
         dtype,
         batch_size,
         num_videos_per_prompt,
@@ -386,8 +385,8 @@ class StableVideoDiffusionControlNetPipeline(DiffusionPipeline):
         max_guidance_scale: float = 3.0,
         fps: int = 7,
         motion_bucket_id: int = 127,
-        controlnet_image_index: Optional[int] = [0],
-        coordinate_values = None,
+        # controlnet_image_index: Optional[int] = [0],
+        # coordinate_values = None,
         noise_aug_strength: int = 0.02,
         decode_chunk_size: Optional[int] = None,
         num_videos_per_prompt: Optional[int] = 1,
@@ -569,7 +568,7 @@ class StableVideoDiffusionControlNetPipeline(DiffusionPipeline):
                                                 fps,
                                                 motion_bucket_id,
                                                 noise_aug_strength,
-                                                coordinate_values,
+                                                # coordinate_values,
                                                 encoder_hidden_states.dtype,
                                                 batch_size,
                                                 num_videos_per_prompt,
@@ -646,7 +645,7 @@ class StableVideoDiffusionControlNetPipeline(DiffusionPipeline):
                     cond_scale = controlnet_cond_scale * controlnet_keep[i]
 
 
-                assert condition_img.shape[1] >= len(controlnet_image_index)   
+                # assert condition_img.shape[1] >= len(controlnet_image_index)   
 
 
                 # VAE encode

@@ -14,6 +14,7 @@ weights/
 checkpoints/
 validation_videos*
 pretrained/*
+.gradio/*
 
 *.pyc
 *.sh

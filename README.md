@@ -5,8 +5,9 @@
 
 ## This&That: Language-Gesture Controlled Video Generation for Robot Planning
     
-[![arXiv](https://img.shields.io/badge/arXiv-red)]([https://arxiv.org/pdf/2312.03641.pdf](https://arxiv.org/abs/2407.05530?context=cs)) &ensp; [![Project Page](https://img.shields.io/badge/Project%20Page-green
-)](https://cfeng16.github.io/this-and-that/) 
+[![Paper](https://img.shields.io/badge/arXiv-Paper-b31b1b?logo=arxiv&logoColor=white)](http://arxiv.org/abs/2407.05530)
+[![Website](https://img.shields.io/badge/Project-Website-pink?logo=googlechrome&logoColor=white)](https://cfeng16.github.io/this-and-that/)
+[![HuggingFace Demo](https://img.shields.io/badge/🤗%20HuggingFace-yellow)](https://huggingface.co/HikariDawn/This-and-That-1.1)
     
 </div>
 
@@ -23,7 +24,7 @@ Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that).
 - [x] Release the test code implementation of This&That 
 - [x] Release the huggingface pretrained Bridge-trained paper weight (v1.0) of This&That 
 - [x] Release the huggingface pretrained Bridge-trained improved weight (v1.1) of This&That 
-- [ ] Release the Gradio Demo && Huggingface Demo
+- [x] Release the Gradio Demo && Huggingface Demo
 - [ ] Release the huggingface pretrained IssacGym-trained paper weight of This&That 
 - [ ] Release the dataset curation
 - [ ] Release the train code implementation

@@ -22,21 +22,267 @@ from diffusers import (
     AutoencoderKLTemporalDecoder,
     DDPMScheduler,
 )
+from diffusers.utils import check_min_version, is_wandb_available, load_image, export_to_video
 from huggingface_hub import hf_hub_download
 from transformers import AutoTokenizer, PretrainedConfig    
+
 
 # Import files from the local folder
 root_path = os.path.abspath('.')
 sys.path.append(root_path)
-from train_code.train_svd import log_validation as unet_log_validation
-from train_code.train_csvd import log_validation as controlnet_log_validation
 from train_code.train_svd import import_pretrained_text_encoder
+from data_loader.video_dataset import tokenize_captions
+from data_loader.video_this_that_dataset import get_thisthat_sam
 from svd.unet_spatio_temporal_condition import UNetSpatioTemporalConditionModel
+from svd.pipeline_stable_video_diffusion import StableVideoDiffusionPipeline
 from svd.temporal_controlnet import ControlNetModel
+from svd.pipeline_stable_video_diffusion_controlnet import StableVideoDiffusionControlNetPipeline
+
+
 
 # Seed
 # torch.manual_seed(42)
 # np.random.seed(42)
+
+
+def unet_inference(vae, unet, image_encoder, text_encoder, tokenizer, config, accelerator, weight_dtype, step, 
+                        parent_store_folder = None, force_close_flip = False, use_ambiguous_prompt=False):
+
+    # Init
+    validation_source_folder = config["validation_img_folder"] 
+    
+
+    # Init the pipeline
+    pipeline = StableVideoDiffusionPipeline.from_pretrained(
+        config["pretrained_model_name_or_path"],
+        vae = accelerator.unwrap_model(vae),
+        image_encoder = accelerator.unwrap_model(image_encoder),
+        unet = accelerator.unwrap_model(unet),
+        revision = None,    # Set None directly now
+        torch_dtype = weight_dtype,
+    )
+    pipeline = pipeline.to(accelerator.device)
+    pipeline.set_progress_bar_config(disable=True)
+
+
+    # Process all image in the folder
+    frames_collection = []
+    for image_name in sorted(os.listdir(validation_source_folder)):
+        if accelerator.is_main_process:
+            if parent_store_folder is None:
+                validation_store_folder = os.path.join(config["validation_store_folder"] + "_" + config["scheduler"], "step_" + str(step), image_name)
+            else:
+                validation_store_folder = os.path.join(parent_store_folder, image_name)
+                
+            if os.path.exists(validation_store_folder):
+                shutil.rmtree(validation_store_folder)
+            os.makedirs(validation_store_folder)
+
+        image_path = os.path.join(validation_source_folder, image_name, 'im_0.jpg')
+        ref_image = load_image(image_path)
+        ref_image = ref_image.resize((config["width"], config["height"]))
+        
+        
+        # Decide the motion score in SVD (mostly what we use is fix value now)
+        if config["motion_bucket_id"] is None:      
+            raise NotImplementedError("We need a fixed motion_bucket_id in the config")
+        else:
+            reflected_motion_bucket_id = config["motion_bucket_id"]
+        # print("Inference Motion Bucket ID is ", reflected_motion_bucket_id)
+
+
+        # Prepare text prompt
+        if config["use_text"]:
+            # Read the file
+            file_path = os.path.join(validation_source_folder, image_name, "lang.txt")
+            file = open(file_path, 'r')
+            prompt = file.readlines()[0]  # Only read the first line
+            if use_ambiguous_prompt:
+                prompt = prompt.split(" ")[0] + " this to there"
+                print("We are creating ambiguous prompt, which is: ", prompt)
+        else:
+            prompt = ""
+        # Use the same tokenize process as the dataset preparation stage
+        tokenized_prompt = tokenize_captions(prompt, tokenizer, config, is_train=False).unsqueeze(0).to(accelerator.device)    # Use unsqueeze to expand dim
+
+        # Store the prompt for the sanity check
+        f = open(os.path.join(validation_store_folder, "lang_cond.txt"), "a")
+        f.write(prompt)
+        f.close()
+
+
+        # Flip the image by chance (it is needed to check whether there is any object position words [left|right] in the prompt text)
+        flip = False
+        if not force_close_flip:        # force_close_flip is True in testing time; else, we cannot match in the same standard
+            if random.random() < config["flip_aug_prob"]:
+                if config["use_text"]:
+                    if prompt.find("left") == -1 and prompt.find("right") == -1:    # Cannot have position word, like left and right (up and down is ok)
+                        flip = True
+                else:
+                    flip = True
+            if flip:
+                print("Use flip in validation!")
+                ref_image = ref_image.transpose(Image.FLIP_LEFT_RIGHT)
+
+
+        # Call the model for inference
+        with torch.autocast("cuda"):
+            frames = pipeline(
+                                ref_image, 
+                                tokenized_prompt,
+                                config["use_text"],
+                                text_encoder,
+                                height = config["height"],
+                                width = config["width"],
+                                num_frames = config["video_seq_length"], 
+                                num_inference_steps = config["num_inference_steps"],
+                                decode_chunk_size = 8, 
+                                motion_bucket_id = reflected_motion_bucket_id,
+                                fps = 7,
+                                noise_aug_strength = config["inference_noise_aug_strength"],
+                              ).frames[0]     
+
+        # Store the frames
+        # breakpoint()
+        for idx, frame in enumerate(frames):
+            frame.save(os.path.join(validation_store_folder, str(idx)+".png"))
+        imageio.mimsave(os.path.join(validation_store_folder, 'combined.gif'), frames)      # gif storage quality is not high, recommend to check png images
+
+        frames_collection.append(frames)
+
+
+    # Cleaning process
+    del pipeline
+    torch.cuda.empty_cache()
+
+    return frames_collection   # Return resuly based on the need
+
+
+    
+def gesturenet_inference(vae, unet, controlnet, image_encoder, text_encoder, tokenizer, config, accelerator, weight_dtype, step, 
+                        parent_store_folder=None, force_close_flip=False, use_ambiguous_prompt=False):
+
+
+    # Init
+    validation_source_folder = config["validation_img_folder"] 
+    
+
+    # Init the pipeline
+    pipeline = StableVideoDiffusionControlNetPipeline.from_pretrained(
+        config["pretrained_model_name_or_path"],        # Still based on regular SVD config
+        vae = vae,
+        image_encoder = image_encoder,
+        unet = unet,
+        revision = None,    # Set None directly now
+        torch_dtype = weight_dtype,
+    )
+    pipeline = pipeline.to(accelerator.device)
+    pipeline.set_progress_bar_config(disable=True)
+
+
+    # Process all image in the folder
+    frames_collection = []
+    for image_name in sorted(os.listdir(validation_source_folder)):
+        if accelerator.is_main_process:
+            if parent_store_folder is None:
+                validation_store_folder = os.path.join(config["validation_store_folder"] + "_" + config["scheduler"], "step_" + str(step), image_name)
+            else:
+                validation_store_folder = os.path.join(parent_store_folder, image_name)
+                
+            if os.path.exists(validation_store_folder):
+                shutil.rmtree(validation_store_folder)
+            os.makedirs(validation_store_folder)
+
+        image_path = os.path.join(validation_source_folder, image_name, 'im_0.jpg')
+        ref_image = load_image(image_path)      # [0, 255] Range
+        ref_image = ref_image.resize((config["width"], config["height"]))
+
+
+        # Prepare text prompt
+        if config["use_text"]:
+            # Read the file
+            file_path = os.path.join(validation_source_folder, image_name, "lang.txt")
+            file = open(file_path, 'r')
+            prompt = file.readlines()[0]  # Only read the first line
+            if use_ambiguous_prompt:
+                prompt = prompt.split(" ")[0] + " this to there"
+                print("We are creating ambiguous prompt, which is: ", prompt)
+        else:
+            prompt = ""
+        # Use the same tokenize process as the dataset preparation stage
+        tokenized_prompt = tokenize_captions(prompt, tokenizer, config, is_train=False).unsqueeze(0).to(accelerator.device)    # Use unsqueeze to expand dim
+
+        # Store the prompt for the sanity check
+        f = open(os.path.join(validation_store_folder, "lang_cond.txt"), "a")
+        f.write(prompt)
+        f.close()
+
+        # Flip the image by chance (it is needed to check whether there is any object position words [left|right] in the prompt text)
+        flip = False
+        if not force_close_flip:    # force_close_flip is True in testing time; else, we cannot match in the same standard
+            if random.random() < config["flip_aug_prob"]:
+                if config["use_text"]:
+                    if prompt.find("left") == -1 and prompt.find("right") == -1:    # Cannot have position word, like left and right (up and down is ok)
+                        flip = True
+                else:
+                    flip = True
+            if flip:
+                print("Use flip in validation!")
+                ref_image = ref_image.transpose(Image.FLIP_LEFT_RIGHT)
+
+
+        if config["data_loader_type"] == "thisthat":
+            condition_img, reflected_motion_bucket_id, controlnet_image_index, coordinate_values = get_thisthat_sam(config, 
+                                                                                                                    os.path.join(validation_source_folder, image_name),
+                                                                                                                    flip = flip, 
+                                                                                                                    store_dir = validation_store_folder,
+                                                                                                                    verbose = True)
+        else:
+            raise NotImplementedError("We don't support such data loader type")
+
+
+
+        # Call the pipeline
+        with torch.autocast("cuda"):
+            frames = pipeline(
+                                image = ref_image, 
+                                condition_img = condition_img,       # numpy [0,1] range
+                                controlnet = accelerator.unwrap_model(controlnet),
+                                prompt = tokenized_prompt,
+                                use_text = config["use_text"],
+                                text_encoder = text_encoder,
+                                height = config["height"],
+                                width = config["width"],
+                                num_frames = config["video_seq_length"], 
+                                decode_chunk_size = 8, 
+                                motion_bucket_id = reflected_motion_bucket_id,
+                                # controlnet_image_index = controlnet_image_index,
+                                # coordinate_values = coordinate_values,
+                                num_inference_steps = config["num_inference_steps"],
+                                max_guidance_scale = config["inference_max_guidance_scale"],
+                                fps = 7,
+                                use_instructpix2pix = config["use_instructpix2pix"],
+                                noise_aug_strength = config["inference_noise_aug_strength"],
+                                controlnet_conditioning_scale = config["outer_conditioning_scale"],
+                                inner_conditioning_scale = config["inner_conditioning_scale"],
+                                guess_mode = config["inference_guess_mode"],        # False in inference
+                                image_guidance_scale = config["image_guidance_scale"],
+                              ).frames[0]    
+
+        for idx, frame in enumerate(frames):
+            frame.save(os.path.join(validation_store_folder, str(idx)+".png"))
+        imageio.mimsave(os.path.join(validation_store_folder, 'combined.gif'), frames, duration=0.05)
+
+        frames_collection.append(frames)
+
+
+    # Cleaning process
+    del pipeline
+    torch.cuda.empty_cache()
+
+    return frames_collection   # Return resuly based on the need
+
+
 
 def execute_inference(huggingface_pretrained_path, model_type, validation_path, parent_store_folder, use_ambiguous_prompt):
 
@@ -141,20 +387,20 @@ def execute_inference(huggingface_pretrained_path, model_type, validation_path, 
 
     # Prepare the iterative calling
     if model_type == "UNet":
-        generated_frames = unet_log_validation(
-                                                vae, unet, image_encoder, text_encoder, tokenizer, 
-                                                base_config, accelerator, weight_dtype, step="", 
+        generated_frames = unet_inference(
+                                            vae, unet, image_encoder, text_encoder, tokenizer, 
+                                            base_config, accelerator, weight_dtype, step="", 
+                                            parent_store_folder=parent_store_folder, force_close_flip = True,
+                                            use_ambiguous_prompt = use_ambiguous_prompt,
+                                        )
+    
+    elif model_type == "GestureNet":
+        generated_frames = gesturenet_inference(
+                                                vae, unet, gesturenet, image_encoder, text_encoder, tokenizer, 
+                                                base_config, accelerator, weight_dtype, step="",
                                                 parent_store_folder=parent_store_folder, force_close_flip = True,
                                                 use_ambiguous_prompt = use_ambiguous_prompt,
                                             )
-    
-    elif model_type == "GestureNet":
-        generated_frames = controlnet_log_validation(
-                                                        vae, unet, gesturenet, image_encoder, text_encoder, tokenizer, 
-                                                        base_config, accelerator, weight_dtype, step="",
-                                                        parent_store_folder=parent_store_folder, force_close_flip = True,
-                                                        use_ambiguous_prompt = use_ambiguous_prompt,
-                                                    )
 
     else:
         raise NotImplementedError("model_type is no the predefined choices we provide!")
