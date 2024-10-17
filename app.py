@@ -388,7 +388,6 @@ if __name__ == '__main__':
                     with gr.Row():
                         prompt = gr.Textbox(label="Text Prompt")
 
-                # TODO: select New image的时候，还是原来图片，估计还是有BUG，继续调整吧
 
                 with gr.Column():
                     gr.Markdown("""<p style="text-align: center; font-size: 20px">Results</p>""")
