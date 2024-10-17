@@ -109,5 +109,8 @@ If you make use of our work, please cite our paper.
 ```
 
 ## 🤗 Acknowledgment
-The current version of **This&That** is built on [SVD](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid). We appreciate the authors for sharing their awesome codebase.
+The current version of **This&That** is built on [SVD](https://huggingface.co/stabilityai/stable-video-diffusion-img2vid).
+The Hugginface Gradio Demo is based on [DragDiffusion](https://github.com/Yujun-Shi/DragDiffusion).
+
+We appreciate the authors for sharing their awesome codebase.
 
