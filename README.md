@@ -73,28 +73,6 @@ We provide two kinds of model weight, one is paper weight named [**V1.0**](https
 
 
 
-# Warning: The rest are still organizing and is not ready!
-
-## <a name="dataset_curation"></a> Dataset Curation 🧩
-First, you need to download the Bridge dataset as zip file.
-```
-    TBD
-```
-
-
-## <a name="train"></a> Train 💻
-There are two stages in the training.
-
-The first stage is UNet SVD training (conditioned on **image** and **language**).
-The second stage is finetuning our GestureNet (for **image**, **language**, **gesture** modality) which needs to load trained stage1 weight.
-
-```
-    python train_code/train_svd.py
-```
-
-```
-    python train_code/train_csvd.py
-```
 
 
 ## :books: Citation
