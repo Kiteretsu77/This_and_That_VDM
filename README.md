@@ -7,7 +7,7 @@
     
 [![Paper](https://img.shields.io/badge/arXiv-Paper-b31b1b?logo=arxiv&logoColor=white)](http://arxiv.org/abs/2407.05530)
 [![Website](https://img.shields.io/badge/Project-Website-pink?logo=googlechrome&logoColor=white)](https://cfeng16.github.io/this-and-that/)
-[![HuggingFace Demo](https://img.shields.io/badge/🤗%20HuggingFace-yellow)](https://huggingface.co/HikariDawn/This-and-That-1.1)
+[![HuggingFace Demo](https://img.shields.io/badge/🤗%20HuggingFace-Demo-yellow)]([https://huggingface.co/HikariDawn/This-and-That-1.1](https://huggingface.co/spaces/HikariDawn/This-and-That))
     
 </div>
 
@@ -17,7 +17,7 @@ Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that).
     
 
 
-🔥 [Update](#Update) **|** 👀 [**Visualization**](#Visualization)  **|** 🔧 [Installation](#installation) **|** 🧩 [Dataset Curation](#dataset_curation) **|** 💻 [Train](#train) 
+🔥 [Update](#Update) **|** 👀 [**Visualization**](#Visualization)  **|** 🔧 [Installation](#installation) **|** 💻 [Test](#fast_inference) 
 
 
 ## <a name="Update"></a>Update 🔥🔥🔥
@@ -51,8 +51,16 @@ https://github.com/user-attachments/assets/fc6b00c1-db7d-4278-8965-a6cf802a2b08
     git lfs install
 ```
 
+## <a name="fast_inference"></a> Fast Inference ⚡⚡⚡
+Gradio Interactive demo is available by 
+```shell
+    python app.py
+```
+This will use our v1.1 weight for VGL mode only.
+The Hugginface online demo can be found [here](https://huggingface.co/spaces/HikariDawn/This-and-That)
 
-## <a name="regular_inference"></a> Regular Inference ⚡⚡
+
+## <a name="regular_inference"></a> Regular Inference ⚡
 We provide an easy inference methods by automatically download the pretrained and the yaml file needed.
 The testing dataset can be found in **__assets__** folder which includes all the format needed. The generated results can be found at **generated_results**.
 Feel free to explore the coding structure, we won't go too details right now.
