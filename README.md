@@ -7,7 +7,7 @@
     
 [![Paper](https://img.shields.io/badge/arXiv-Paper-b31b1b?logo=arxiv&logoColor=white)](http://arxiv.org/abs/2407.05530)
 [![Website](https://img.shields.io/badge/Project-Website-pink?logo=googlechrome&logoColor=white)](https://cfeng16.github.io/this-and-that/)
-[![HuggingFace Demo](https://img.shields.io/badge/🤗%20HuggingFace-Demo-yellow)]([https://huggingface.co/HikariDawn/This-and-That-1.1](https://huggingface.co/spaces/HikariDawn/This-and-That))
+[![HuggingFace Demo](https://img.shields.io/badge/🤗%20HuggingFace-Demo-yellow)](https://huggingface.co/spaces/HikariDawn/This-and-That)
     
 </div>
 
