@@ -67,14 +67,27 @@ WIDTH = 384
 
 MARKDOWN = \
     """
-    ## <p style='text-align: center'> This&That: Language-Gesture Controlled Video Generation for Robot Planning </p>
+    <div align='center'> 
+    <h1> This&That: Language-Gesture Controlled Video Generation for Robot Planning </h1> \
+        <h2 style='font-weight: 450; font-size: 1rem; margin: 0rem'>\
+            <a href='https://kiteretsu77.github.io/boyang.github.io/'>Boyang Wang</a>, \
+            <a href='https://www.linkedin.com/in/niksridhar/'>Nikhil Sridhar</a>, \
+            <a href='https://cfeng16.github.io/'>Chao Feng</a>, \
+            <a href='https://mvandermerwe.github.io/'>Mark Van der Merwe</a>, \
+            <a href='https://fishbotics.com/'>Adam Fishman</a>, \
+            <a href='https://www.mmintlab.com/people/nima-fazeli/'>Nima Fazeli</a>, \
+            <a href='https://jjparkcv.github.io/'>Jeong Joon Park</a> \
+        </h2> \
     
-    [GitHub](https://github.com/Kiteretsu77/This_and_That_VDM) | [Paper](http://arxiv.org/abs/2407.05530) | [Webpage](https://cfeng16.github.io/this-and-that/)
+    <a style='font-size:18px;color: #000000' href='https://github.com/Kiteretsu77/This_and_That_VDM'> [Github] </a> \
+    <a style='font-size:18px;color: #000000' href='http://arxiv.org/abs/2407.05530'> [ArXiv] </a> \
+    <a style='font-size:18px;color: #000000' href='https://cfeng16.github.io/this-and-that/'> [Project Page] </a> </div> \
+    </div>
 
-    This&That is a Robotics scenario (Bridge-dataset-based for this repo) Language-Gesture-Image-conditioned Video Generation Model for Robot Planning.
+    This&That is a Robotics scenario (Bridge-dataset-based for this demo) Language-Gesture-Image-conditioned Video Generation Model for Robot Planning.
 
     This Demo is on the Video Diffusion Model part.
-    Only GestureNet is provided in this Gradio Demo, you can check the full test code for all pretrained weight available.
+    Only GestureNet is provided in this Gradio Demo, but you can check the full test code for all pretrained weight available.
 
     ### Note: The index we put the gesture point by default here is [4, 10] (5th and 11th) for two gesture points or [4] (5th) for one gesture point.
     ### Note: The resolution now only support is 256x384.
