@@ -67,19 +67,22 @@ WIDTH = 384
 
 MARKDOWN = \
     """
-    ## <p style='text-align: center'> This&That </p>
+    ## <p style='text-align: center'> This&That: Language-Gesture Controlled Video Generation for Robot Planning </p>
     
     [GitHub](https://github.com/Kiteretsu77/This_and_That_VDM) | [Paper](http://arxiv.org/abs/2407.05530) | [Webpage](https://cfeng16.github.io/this-and-that/)
+
     This&That is a Robotics scenario (Bridge-dataset-based for this repo) Language-Gesture-Image-conditioned Video Generation Model for Robot Planning.
 
     This Demo is on the Video Diffusion Model part.
     Only GestureNet is provided in this Gradio Demo, you can check the full test code for all pretrained weight available.
 
-    ### Note: The index we put the gesture point by default here is [4, 10] for two gesture points or [4] for one gesture point.
-    ### Note: The result now only support is 256x384
+    ### Note: The index we put the gesture point by default here is [4, 10] (5th and 11th) for two gesture points or [4] (5th) for one gesture point.
+    ### Note: The resolution now only support is 256x384.
     ### Note: Click "Clear All" to restart everything; Click "Undo Point" to cancel the point you put
+    ### Note: The first run may be long. Click "Clear All" for each run is the safest choice.
     
-    If This&That is helpful, please help star the [GitHub Repo](https://github.com/Kiteretsu77/This_and_That_VDM). Thanks! 
+    If **This&That** is helpful, please help star the [GitHub Repo](https://github.com/Kiteretsu77/This_and_That_VDM). Thanks! 
+    
     """
 
 
@@ -379,7 +382,7 @@ if __name__ == '__main__':
             original_image = gr.State(value=None) # store original input image
             with gr.Row():
                 with gr.Column():
-                    gr.Markdown("""<p style="text-align: center; font-size: 20px">Click two Points</p>""")
+                    gr.Markdown("""<p style="text-align: center; font-size: 30px">Click two Points</p>""")
                     input_image = gr.Image(label="Input Image", height=HEIGHT, width=WIDTH, interactive=False, elem_id="input_img")
                     # gr.Image(type="numpy", label="Click Points", height=HEIGHT, width=WIDTH, interactive=False) # for points clicking
                     undo_button = gr.Button("Undo point")
@@ -390,7 +393,7 @@ if __name__ == '__main__':
 
 
                 with gr.Column():
-                    gr.Markdown("""<p style="text-align: center; font-size: 20px">Results</p>""")
+                    gr.Markdown("""<p style="text-align: center; font-size: 30px">Results</p>""")
                     frames = gr.Video(value=None, label="Generate Video", show_label=True, height=HEIGHT, width=WIDTH)
                     with gr.Row():
                         run_button = gr.Button("Run")
