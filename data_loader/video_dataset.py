@@ -171,7 +171,7 @@ class Video_Dataset(Dataset):
 
 
                 # Valid check 3: motion if needed
-                if config["motion_bucket_id"] is None:
+                if config["motion_bucket_id"] is None:      # This is deprecated now, the motion is fixed value
                     flow_path = os.path.join(dataset_path, video_name, "flow.txt")
                     if "flow.txt" not in all_files:
                         stats_analysis["no_flow_txt"] += 1

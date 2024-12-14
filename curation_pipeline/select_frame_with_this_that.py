@@ -1,6 +1,7 @@
 '''
     This repository is used to prepare Bridge dataset with this that conditioning
 '''
+import argparse
 import os, sys, shutil
 import pickle
 from ultralytics import YOLO
@@ -357,24 +358,35 @@ def manage_seq_range(input_dir, store_dir, sample_failure_collect_folder, total_
 
 if __name__ == "__main__":
 
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset_path', type=str, required=True, help="Image path, should be the flat form we required.")
+    parser.add_argument('--destination_path', type=str, required=True, help="Store path")
+    parser.add_argument('--yolo_pretarined_path', type=str, required=True, help="Yolo Detection file")
+    parser.add_argument('--sam_pretrained_path', type=str, required=True, help="SAM weight -> sam_vit_h_4b8939.pth")
+    parser.add_argument('--sample_failure_collect_folder', type=str, default="", help="Collect failure case for further study")
+    args = parser.parse_args()
+
+
     # General storage setting
-    dataset_path = "../datasets_rob/Bridge_v2_raw"
-    destination_path = "../sanity_check/bridge_v2_TT14_longer_tolerance"
-    sample_failure_collect_folder = ""      # This is to collect cases that fail for active learning
+    dataset_path = args.dataset_path                    # "../datasets_rob/Bridge_v2_raw"
+    destination_path = args.destination_path            # "example_VGL_dataset/"
+    yolo_pretarined_path = args.yolo_pretarined_path    # "pretrained/yolov8n_best.pt"
+    sam_pretrained_path = args.sam_pretrained_path      # "pretrained/sam_vit_h_4b8939.pth"
+
+    sample_failure_collect_folder = args.sample_failure_collect_folder      # This is to collect cases that fail for active learning
 
     total_frames_needed = 14
-    max_original_input_tolerate = 56        # 40 for 14 fps; 60 for 25fps; 
+    max_original_input_tolerate = 56        # 4 * 14 = 56
     do_visualization = True
 
 
     # YOLO model init
-    yolo_pretarined_path = "pretrained/yolov8n_best.pt"
     gripper_detection_model = YOLO("yolov8n.yaml")  # build a new model from scratch
     gripper_detection_model = YOLO(yolo_pretarined_path)  # load a pretrained model (recommended for training)
 
     # SAM model init
     model_type = "vit_h"
-    sam_pretrained_path = "pretrained/sam_vit_h_4b8939.pth"
     sam = sam_model_registry[model_type](checkpoint=sam_pretrained_path).to(device="cuda")
     sam_predictor = SamPredictor(sam)     # There is a lot of setting here
 

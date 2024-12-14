@@ -1,7 +1,7 @@
 
 # Model Setting 
 pretrained_model_name_or_path: stabilityai/stable-video-diffusion-img2vid   # stabilityai/pretrained
-load_unet_path: ../saved_weights/v4_VL_paper/checkpoint-99000        # None/specific path    This is for pretrained-UNet path
+load_unet_path: ../model_weights/ROB_regular_weights/v4_VL_paper/checkpoint-99000        # None/specific path    This is for pretrained-UNet path
 load_controlnet_path:   # None/specific path    For checkpoint loaded from pretrained-Controlnet Path
 video_seq_length: 14
 process_fps: 7

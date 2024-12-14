@@ -13,6 +13,7 @@ diffusers/
 weights/
 checkpoints/
 validation_videos*
+validation_results*
 pretrained/*
 .gradio/*
 

@@ -81,7 +81,7 @@ def parse_args(input_args=None):
     parser.add_argument(
         "--config_path",
         type=str,
-        default="config/train_image2video_controlnet.yaml",
+        default="config/train_image2video_gesturenet.yaml",
         help="Path to pretrained model or model identifier from huggingface.co/models.",
     )
 
@@ -98,6 +98,9 @@ def log_validation(vae, unet, controlnet, image_encoder, text_encoder, tokenizer
 
     # Init
     validation_source_folder = config["validation_img_folder"] 
+    if not os.path.exists(validation_source_folder):    
+        # If you don't have the validation dataset, we skip.
+        return
     
 
     # Init the pipeline
@@ -363,7 +366,7 @@ def main(config):
             shutil.rmtree("runs")
         
         # Copy the config to here
-        os.system(" cp config/train_image2video_controlnet.yaml " + validation_store_folder + "/")
+        os.system(" cp config/train_image2video_gesturenet.yaml " + validation_store_folder + "/")
 
 
     # Load All Module Needed

@@ -90,6 +90,9 @@ def log_validation(vae, unet, image_encoder, text_encoder, tokenizer, config, ac
 
     # Init
     validation_source_folder = config["validation_img_folder"] 
+    if not os.path.exists(validation_source_folder):    
+        # If you don't have the validation dataset, we skip.
+        return
     
 
     # Init the pipeline
