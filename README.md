@@ -27,10 +27,9 @@ Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that).
 - [x] Release the huggingface pretrained Bridge-trained paper weight (v1.0) of This&That 
 - [x] Release the huggingface pretrained Bridge-trained improved weight (v1.1) of This&That 
 - [x] Release the Gradio Demo && Huggingface Demo
-<!-- - [ ] Release the huggingface pretrained IssacGym-trained paper weight of This&That  -->
 - [x] Release the dataset curation
 - [x] Release the train code implementation
-
+<!-- - [ ] Release the huggingface pretrained IssacGym-trained paper weight of This&That  -->
 
 
 :star: **If you like This&That, please help star this repo. Thanks!** :hugs:
