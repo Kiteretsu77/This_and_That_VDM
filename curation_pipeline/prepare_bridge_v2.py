@@ -1,8 +1,8 @@
 '''
-    This repository is used to prepare Bridge dataset
+    This repository is used to prepare Bridge dataset V2
 '''
 import os, sys, shutil
-
+import argparse
 
 
 
@@ -20,10 +20,10 @@ if __name__ == "__main__":
     start_idx = 0
 
 
-
     # Make dir if needed
-    if not os.path.exists(destination_parent_path):
-        os.mkdir(destination_parent_path)
+    if os.path.exists(destination_path):
+        shutil.rmtree(destination_path)
+    os.makedirs(destination_path)
 
 
     # Iterate all the folders inside
@@ -72,13 +72,13 @@ if __name__ == "__main__":
                                 print("img_folder_path does not exist for ", img_folder_path)
                                 continue
                             
-                            destination_path = os.path.join(destination_parent_path, str(start_idx))
-                            if os.path.exists(destination_path):
-                                shutil.rmtree(destination_path)
+                            target_folder_path = os.path.join(destination_path, str(start_idx))
+                            if os.path.exists(target_folder_path):
+                                shutil.rmtree(target_folder_path)
 
                             # Now we can copy the folder to our destination
-                            shutil.copytree(img_folder_path, destination_path)
-                            print("Copy " + str(img_folder_path) + " to " + str(os.path.join(destination_path, str(start_idx))))
+                            shutil.copytree(img_folder_path, target_folder_path)
+                            print("Copy " + str(img_folder_path) + " to " + target_folder_path)
 
 
                             # Sanity check
@@ -96,8 +96,8 @@ if __name__ == "__main__":
                             #     continue
                             
                             # Move other auxilary files
-                            shutil.copy(policy_out_file_path, os.path.join(destination_path, "policy_out.pkl"))
-                            shutil.copy(lang_txt_file_path, os.path.join(destination_path, "lang.txt"))
+                            shutil.copy(policy_out_file_path, os.path.join(target_folder_path, "policy_out.pkl"))
+                            shutil.copy(lang_txt_file_path, os.path.join(target_folder_path, "lang.txt"))
 
                             start_idx += 1
 

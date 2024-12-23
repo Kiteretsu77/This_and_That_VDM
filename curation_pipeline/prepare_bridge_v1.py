@@ -1,8 +1,8 @@
 '''
-    This repository is used to prepare Bridge dataset
+    This repository is used to prepare Bridge dataset V1
 '''
 import os, sys, shutil
-
+import argparse
 
 
 
