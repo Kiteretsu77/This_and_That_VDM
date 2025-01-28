@@ -13,7 +13,7 @@
 
 </div>
 
-This is the official implementation of Video Generation part of **This&amp;That**: Language-Gesture Controlled Video Generation for Robot Planning (ICRA 2025). 
+This is the official implementation of Video Generation part of **This&amp;That**: Language-Gesture Controlled Video Generation for Robot Planning (**ICRA 2025**). 
 
 Robotics part can be found [**here**](https://github.com/cfeng16/this-and-that).
     
