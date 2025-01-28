@@ -3,7 +3,7 @@
 </p>
 <div align="center">
 
-## This&That: Language-Gesture Controlled Video Generation for Robot Planning
+## This&That: Language-Gesture Controlled Video Generation for Robot Planning (ICRA 2025)
     
 [![Paper](https://img.shields.io/badge/arXiv-Paper-b31b1b?logo=arxiv&logoColor=white)](http://arxiv.org/abs/2407.05530)
 [![Website](https://img.shields.io/badge/Project-Website-pink?logo=googlechrome&logoColor=white)](https://cfeng16.github.io/this-and-that/)
