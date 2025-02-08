@@ -47,7 +47,7 @@ def read_center_point(model, img_path, do_visualization, store_path):
     center_points = []
     for idx in range(num):
         x, y, w, h = bounding_boxes[idx].detach().cpu().numpy()
-        center_point = [x, y]   # TODO: y+(h/4) 根据经验，往下飘逸25%的高度，一般来说比较有帮助
+        center_point = [x, y]  
 
         edge_point_cord.extend([ (x+w//2, y+h//2), (x-w//2, y+h//2), (x-w//2, y-h//2), (x+w//2, y-h//2) ])
 
@@ -90,7 +90,6 @@ def read_center_point(model, img_path, do_visualization, store_path):
 
 def detect_gripper(gripper_detection_model, input_dir, action_start, action_end, do_visualization, store_dir, sample_failure_collect_folder=None):
 
-    # 先处理第一个point的（这个比较重要，所以要重复3次）；然后再快速处理最后一个point
 
     # Process the first action frame by iterating next three frames and choose the closest one
     first_center_points = []
@@ -113,7 +112,7 @@ def detect_gripper(gripper_detection_model, input_dir, action_start, action_end,
 
             # Add edge points
             print(edge_point_cord)
-            edge_point_cords.extend(edge_point_cord)    # 我有点担心所有point就这么extend会对一些的edge case不是那么robust
+            edge_point_cords.extend(edge_point_cord)    
 
 
     # Select the closest point between two
@@ -303,7 +302,7 @@ def manage_seq_range(input_dir, store_dir, sample_failure_collect_folder, total_
             gaps[-1*(1+(idx//2))] += 1   # End to start order
 
     # Map the gap to the specific orders
-    idx_orders = [1]    # 从1还是shift一下问题应该不大
+    idx_orders = [1]    
     for global_idx, gap in enumerate(gaps):
         idx_orders.append(idx_orders[-1] + gap)
     if idx_orders[-1] >= num_frames_input:
@@ -319,7 +318,7 @@ def manage_seq_range(input_dir, store_dir, sample_failure_collect_folder, total_
         destination_path = os.path.join(store_dir, "im_"+str(global_idx)+".jpg")
 
         if not os.path.exists(source_path):     # Theoretically, source_path must exists
-            message = "We couldn't find the source path. Theoretically, source_path must exists!"  # 有一种可能就是我们丢失了一些地方，在cp或者本来就没有，记得统计数量
+            message = "We couldn't find the source path. Theoretically, source_path must exists!"  
             return (False, message)
 
         shutil.copyfile(source_path, destination_path)
