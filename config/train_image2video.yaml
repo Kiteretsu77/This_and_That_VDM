@@ -22,7 +22,7 @@ acceleration_tolerance: 4     # Recommened setting
 
 # Text setting
 use_text: True                             # If this is True, we will use text value
-pretrained_tokenizer_name_or_path: stabilityai/stable-diffusion-2-1-base      # Use SD 2.1
+pretrained_tokenizer_name_or_path: RedbeardNZ/stable-diffusion-2-1-base      # Use SD 2.1 by an unofficial codebase (because official one is deleted)
 empty_prompts_proportion: 0.0              # Useless now, we already have CFG in training
 mix_ambiguous: False                       # Whether we mix ambiguous prompt for "this" and "that"  
 
