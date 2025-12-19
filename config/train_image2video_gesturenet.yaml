@@ -24,7 +24,7 @@ flip_aug_prob: 0.45         # Whether we flip the GT and cond vertically
 
 # Text setting
 use_text: True                              # If this is True, we will use text value
-pretrained_tokenizer_name_or_path: stabilityai/stable-diffusion-2-1-base      # Use SD 2.1
+pretrained_tokenizer_name_or_path: RedbeardNZ/stable-diffusion-2-1-base       # Use SD 2.1 by an unofficial codebase (because official one is deleted)
 empty_prompts_proportion: 0.0   
 mix_ambiguous: False                         # Whether we mix ambiguous prompt for "this" and "that"          
 
